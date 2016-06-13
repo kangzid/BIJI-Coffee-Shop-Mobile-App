@@ -1,7 +1,7 @@
-import 'package:biji_coffee/pages/cart/cart_page.dart';
 import 'package:flutter/material.dart';
-import '../../data/products_data.dart';
-import '/pages/products/detail_product_page.dart';
+import 'package:biji_coffee/pages/cart/cart_page.dart';
+import 'package:biji_coffee/data/services/product_service.dart';
+import 'detail_product_page.dart'; // Adjusted relative import if needed or keep absolute if it works
 
 class ProductsPage extends StatefulWidget {
   final String? selectedCategory;
@@ -14,22 +14,101 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   final TextEditingController _searchController = TextEditingController();
+  final ProductService _productService = ProductService();
+
   late String selectedCategory;
   String searchQuery = '';
+  List<Map<String, dynamic>> _allProducts = [];
+  bool _isLoading = true;
+  String _errorMessage = '';
+
+  // Hardcoded categories for tabs - could also be fetched from API
+  final List<String> categories = ['Beverages', 'Snacks', 'Food', 'Dessert'];
 
   @override
   void initState() {
     super.initState();
     selectedCategory = widget.selectedCategory ?? 'Beverages';
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    try {
+      // Fetch all products to allow client-side filtering and search
+      // passing 'All' or null to fetch everything if API supports it,
+      // otherwise fetch by category if API requires it.
+      // Based on service, passing null fetches all (if API endpoint ./products returns all).
+      // If API requires category, we might need to fetch multiple times or just current category.
+      // Let's assume fetching all is better for search.
+      final products = await _productService.fetchProducts();
+
+      if (mounted) {
+        setState(() {
+          _allProducts = products;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredProducts = products.where((product) {
-      final title = product['title'].toString().toLowerCase();
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator(color: Colors.orange)),
+      );
+    }
+
+    if (_errorMessage.isNotEmpty) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error loading products:\n$_errorMessage',
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _isLoading = true;
+                    _errorMessage = '';
+                  });
+                  _fetchProducts();
+                },
+                child: const Text('Retry'),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    final filteredProducts = _allProducts.where((product) {
+      final title =
+          (product['title'] ?? product['name'] ?? '').toString().toLowerCase();
       final matchesSearch = title.contains(searchQuery.toLowerCase());
+
+      // Category check
+      // API might return category name. Ensure it matches tab names.
+      // If API category is different, this filter might hide everything.
+      // Let's check logic: selectedCategory default is 'Beverages'.
+      // If selectedCategory == 'All', show all.
+      final productCategory = product['category'] ?? '';
       final matchesCategory =
-          selectedCategory == 'All' || product['category'] == selectedCategory;
+          selectedCategory == 'All' || productCategory == selectedCategory;
+
       return matchesSearch && matchesCategory;
     }).toList();
 
@@ -183,39 +262,47 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
               const SizedBox(height: 20),
 
-              // 🛍️ Product Grid (fix error ✅)
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                switchInCurve: Curves.easeInOut,
-                switchOutCurve: Curves.easeInOut,
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: ScaleTransition(
-                      scale: animation,
-                      child: child,
+              // 🛍️ Product Grid
+              filteredProducts.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Text("No products found"),
+                      ),
+                    )
+                  : AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      switchInCurve: Curves.easeInOut,
+                      switchOutCurve: Curves.easeInOut,
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: ScaleTransition(
+                            scale: animation,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: GridView.builder(
+                        key: ValueKey(selectedCategory + searchQuery),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: 16),
+                        itemCount: filteredProducts.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 30,
+                          mainAxisSpacing: 20,
+                          childAspectRatio: 0.55,
+                        ),
+                        itemBuilder: (context, index) {
+                          final product = filteredProducts[index];
+                          return _buildProductCard(product);
+                        },
+                      ),
                     ),
-                  );
-                },
-                child: GridView.builder(
-                  key: ValueKey(selectedCategory),
-                  shrinkWrap: true, // ✅ penting!
-                  physics:
-                      const NeverScrollableScrollPhysics(), // ✅ biar SingleChildScrollView yang handle scroll
-                  padding: const EdgeInsets.only(bottom: 16),
-                  itemCount: filteredProducts.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 30,
-                    mainAxisSpacing: 20,
-                    childAspectRatio: 0.55,
-                  ),
-                  itemBuilder: (context, index) {
-                    final product = filteredProducts[index];
-                    return _buildProductCard(product);
-                  },
-                ),
-              ),
             ],
           ),
         ),
@@ -224,6 +311,12 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 
   Widget _buildProductCard(Map<String, dynamic> product) {
+    // Determine image provider (Network or Asset)
+    final imagePath = product['image'] ?? '';
+    final isNetworkImage = imagePath.toString().startsWith('http');
+    final title = product['title'] ?? product['name'] ?? 'No Name';
+    final price = product['price'] ?? 0;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -260,28 +353,44 @@ class _ProductsPageState extends State<ProductsPage> {
                 child: Stack(
                   children: [
                     Hero(
-                      // 🔥 tag dibuat unik berdasarkan nama dan harga (atau index nanti)
-                      tag: 'product-${product['title']}-${product['price']}',
+                      tag: 'product-$title-$price',
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: SizedBox(
                           width: double.infinity,
-                          child: Image.asset(
-                            product['image'],
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 140,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(20),
+                          child: isNetworkImage
+                              ? Image.network(
+                                  imagePath,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 140,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Icon(Icons.broken_image,
+                                          size: 40, color: Colors.grey),
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  imagePath,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 140,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Icon(Icons.image,
+                                          size: 40, color: Colors.grey),
+                                    );
+                                  },
                                 ),
-                                child: const Icon(Icons.image,
-                                    size: 40, color: Colors.grey),
-                              );
-                            },
-                          ),
                         ),
                       ),
                     ),
@@ -343,7 +452,7 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                product['title'],
+                title,
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
@@ -355,7 +464,7 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
               const SizedBox(height: 3),
               Text(
-                product['subtitle'],
+                product['subtitle'] ?? '',
                 style: const TextStyle(
                   color: Color(0xFF9E9E9E),
                   fontSize: 12,
@@ -374,7 +483,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '\$${product['price']}',
+                    '\$${price.toString()}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,

@@ -18,9 +18,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget build(BuildContext context) {
     final product = widget.product;
 
-    final String imagePath = product['image'] ?? 'assets/images/placeholder.png';
+    final String imagePath =
+        product['image'] ?? 'assets/images/placeholder.png';
     final String title = product['title'] ?? 'Produk Tanpa Nama';
-    final double price = (product['price'] ?? 0).toDouble();
+    // Helper to safely parse double
+    double parseDouble(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is int) return value.toDouble();
+      if (value is double) return value;
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    }
+
+    final double price = parseDouble(product['price']);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -53,21 +63,37 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         ),
                         child: Hero(
                           tag: "product_${product['id'] ?? title}",
-                          child: Image.asset(
-                            imagePath,
-                            width: double.infinity,
-                            height: 420,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 320,
-                                width: double.infinity,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.broken_image,
-                                    size: 60, color: Colors.grey),
-                              );
-                            },
-                          ),
+                          child: imagePath.startsWith('http')
+                              ? Image.network(
+                                  imagePath,
+                                  width: double.infinity,
+                                  height: 420,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 320,
+                                      width: double.infinity,
+                                      color: Colors.grey[200],
+                                      child: const Icon(Icons.broken_image,
+                                          size: 60, color: Colors.grey),
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  imagePath,
+                                  width: double.infinity,
+                                  height: 420,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 320,
+                                      width: double.infinity,
+                                      color: Colors.grey[200],
+                                      child: const Icon(Icons.broken_image,
+                                          size: 60, color: Colors.grey),
+                                    );
+                                  },
+                                ),
                         ),
                       ),
                     ),
@@ -217,8 +243,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           // ========== TOMBOL BACK + FAVORITE ==========
           SafeArea(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -247,8 +272,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             right: 0,
             child: Container(
               color: Colors.white,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: SizedBox(
                 width: double.infinity,
                 height: 55,

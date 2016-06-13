@@ -102,6 +102,72 @@
                         }
                     },
                     "response": []
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "logout"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User Profile",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/user",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "user"
+                            ]
+                        }
+                    },
+                    "response": []
                 }
             ]
         },
@@ -129,8 +195,8 @@
                             ],
                             "query": [
                                 {
-                                    "key": "category_id",
-                                    "value": "1",
+                                    "key": "category",
+                                    "value": "Beverages",
                                     "disabled": true
                                 }
                             ]
@@ -161,14 +227,9 @@
                         }
                     },
                     "response": []
-                }
-            ]
-        },
-        {
-            "name": "User",
-            "item": [
+                },
                 {
-                    "name": "Get User Profile",
+                    "name": "Create Product",
                     "request": {
                         "auth": {
                             "type": "bearer",
@@ -180,7 +241,92 @@
                                 }
                             ]
                         },
-                        "method": "GET",
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"category\": \"Beverages\",\n    \"name\": \"White Cream Cappuccino\",\n    \"subtitle\": \"with Oat Milk\",\n    \"description\": \"Smooth and creamy cappuccino\",\n    \"price\": 35000,\n    \"image\": \"http://example.com/cappuccino.jpg\",\n    \"rating\": 4.5\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Product",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"price\": 38000,\n    \"rating\": 4.8\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products",
+                                "1"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Product",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
                         "header": [
                             {
                                 "key": "Accept",
@@ -189,12 +335,13 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/user",
+                            "raw": "{{base_url}}/products/1",
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
-                                "user"
+                                "products",
+                                "1"
                             ]
                         }
                     },
