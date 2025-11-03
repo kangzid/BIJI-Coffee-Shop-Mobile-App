@@ -6,7 +6,14 @@ import '../../pages/home/home_page.dart';
 import '../../pages/cart/cart_page.dart';
 import '../../pages/rewards/rewards_page.dart';
 import '../../pages/profile/profile_page.dart';
-import '../../pages/products/products_page.dart'; // tambahkan ini karena ada route /products
+import '../../pages/products/products_page.dart';
+
+// --- TAMBAHKAN IMPORT INI ---
+// Pastikan Anda sudah membuat file-file ini dari langkah saya sebelumnya
+import '../../pages/messages/message_list_page.dart';
+import '../../pages/messages/chat_detail_page.dart';
+import '../../pages/tracker/delivery_tracker_page.dart';
+// ----------------------------
 
 class AppRoutes {
   // Daftar route name
@@ -18,7 +25,13 @@ class AppRoutes {
   static const String cart = '/cart';
   static const String rewards = '/rewards';
   static const String profile = '/profile';
-  static const String products = '/products'; // dari branch Zaenal
+  static const String products = '/products';
+
+  // --- TAMBAHKAN ROUTE NAME INI ---
+  static const String messageList = '/messages';
+  static const String chatDetail = '/chat-detail';
+  static const String deliveryTracker = '/tracker';
+  // ---------------------------------
 
   // Generator route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -42,6 +55,23 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ProfilePage());
       case products:
         return MaterialPageRoute(builder: (_) => const ProductsPage());
+
+      // --- TAMBAHKAN CASE INI ---
+      case messageList:
+        return MaterialPageRoute(builder: (_) => const MessageListPage());
+      case chatDetail:
+        // Mengambil argumen (nama) yang dikirim saat navigasi
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+            builder: (_) => ChatDetailPage(
+                  userName: args?['name'] ?? 'Chat',
+                  userAvatar: args?['avatar'] ?? 'assets/images/profile1.jpg',
+                  userId: args?['id'] ?? 'ID 2445556',
+                ));
+      case deliveryTracker:
+        return MaterialPageRoute(builder: (_) => const DeliveryTrackerPage());
+      // ----------------------------
+
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(
