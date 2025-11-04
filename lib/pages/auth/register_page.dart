@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = const Color(0xFF3E2A47); // Warna ungu tua
+    final Color primaryColor = const Color(0xFF3E2A47);
 
     return Scaffold(
       backgroundColor: primaryColor,
       body: SafeArea(
         child: Stack(
           children: [
-            // Card utama
             Positioned(
-              top: 25, // jarak dari atas sedikit
+              top: 25,
               left: 0,
               right: 0,
-              bottom: 0, // mentok bawah
+              bottom: 0,
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
@@ -41,7 +40,7 @@ class LoginPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Sign In",
+                        "Sign Up",
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -68,7 +67,31 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 8),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: "info@example.com",
+                          hintText: "Roberto Karlos",
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 18, horizontal: 16),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(color: Colors.black26),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: primaryColor),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Email",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: "Email Address",
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 18, horizontal: 16),
                           border: OutlineInputBorder(
@@ -123,7 +146,7 @@ class LoginPage extends StatelessWidget {
                             Navigator.pushReplacementNamed(context, '/home');
                           },
                           child: const Text(
-                            "LOGIN",
+                            "REGISTER",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -137,51 +160,7 @@ class LoginPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              color: Colors.grey.shade800,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          TextButton(
-                            onPressed: () {},
-                            style:
-                                TextButton.styleFrom(padding: EdgeInsets.zero),
-                            child: Text(
-                              "Reset Password",
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.network(
-                            "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
-                            width: 32,
-                            height: 32,
-                          ),
-                          const SizedBox(width: 28),
-                          Image.network(
-                            "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png",
-                            width: 32,
-                            height: 32,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Dont have any account?",
+                            "Already have an account?",
                             style: TextStyle(
                               color: Colors.grey.shade700,
                               fontSize: 13,
@@ -201,10 +180,10 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/register');
+                            Navigator.pushReplacementNamed(context, '/login');
                           },
                           child: Text(
-                            "CREATE AN ACCOUNT",
+                            "SIGN IN",
                             style: TextStyle(
                               color: Colors.grey.shade800,
                               fontWeight: FontWeight.w700,

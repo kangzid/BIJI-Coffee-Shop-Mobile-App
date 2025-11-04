@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/routes/app_routes.dart'; // ✅ disesuaikan dengan path kamu
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});
@@ -11,9 +12,9 @@ class HeaderSection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Bagian kiri (teks sapaan)
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 "Good Morning",
                 style: TextStyle(
@@ -32,37 +33,42 @@ class HeaderSection extends StatelessWidget {
             ],
           ),
 
-          // Bagian kanan (foto profil + indikator)
-          Stack(
-            clipBehavior: Clip.none, // <-- 1. TAMBAHKAN INI
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  "assets/images/profile1.jpg",
-                  width: 45,
-                  height: 45,
-                  fit: BoxFit.cover,
+          // Bagian kanan (foto profil dengan indikator notifikasi)
+          GestureDetector(
+            onTap: () {
+              // ✅ Navigasi ke halaman notifikasi
+              Navigator.pushNamed(context, AppRoutes.notifications);
+            },
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    "assets/images/profile1.jpg",
+                    width: 45,
+                    height: 45,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              Positioned(
-                top: -5, // <-- 2. UBAH INI (dari 4 menjadi -5)
-                right: -5, // <-- 3. UBAH INI (dari 4 menjadi -5)
-                child: Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(
-                    // <-- 4. TAMBAHKAN BORDER
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white, // Border putih
-                      width: 1.5, // Ketebalan border
+                Positioned(
+                  top: -5,
+                  right: -5,
+                  child: Container(
+                    width: 15,
+                    height: 15,
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

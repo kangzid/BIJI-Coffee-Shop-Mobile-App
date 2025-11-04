@@ -10,8 +10,18 @@ biji_coffee
 │   │       │   └── LOG.old
 │   │       ├── blob_storage
 │   │       │   ├── 0333ba71-555f-40b9-8391-a71c4b9b00e3
+│   │       │   ├── 266de1b9-b6fc-4777-92e9-d557c14d01ef
+│   │       │   ├── 477f941b-4675-4311-88ff-257e1021fcaa
+│   │       │   ├── 5eb1f08e-51f6-42ed-9d2a-d24296467e66
 │   │       │   ├── 771863f6-f39d-40c1-863f-89941505579a
+│   │       │   ├── 8579e743-5b07-4322-bf2a-9665debf309c
+│   │       │   ├── 926565a5-9fee-44cb-b17a-3d4e0b8582e0
+│   │       │   ├── 98d02e10-ebce-402e-94b9-c3f6d57d2c7d
 │   │       │   ├── a184ff29-ac4c-4dfc-988f-32d104f19983
+│   │       │   ├── a87bb599-efe6-480a-95cc-3f10527d22b3
+│   │       │   ├── af97b284-dd05-4c0b-a0df-b653a80ea663
+│   │       │   ├── b2403412-be3f-4d59-ab24-b28005be8da9
+│   │       │   ├── e544c255-6eba-4c05-8fad-5bac3f6052d8
 │   │       │   └── fd90da9d-1577-496a-8a08-eb3edb8f90ee
 │   │       ├── BudgetDatabase
 │   │       │   ├── LOCK
@@ -142,12 +152,22 @@ biji_coffee
 │   │       │   └── ScriptCache
 │   │       │       ├── index-dir
 │   │       │       │   └── the-real-index
+│   │       │       ├── 013888a1cda32b90_0
+│   │       │       ├── 08b99d499107ba17_0
+│   │       │       ├── 0ae129c33e7a30bd_0
+│   │       │       ├── 297ecea5cebb5dfe_0
+│   │       │       ├── 2a0afd649b00527b_0
 │   │       │       ├── 2cc80dabc69f58b6_0
 │   │       │       ├── 4cb013792b196a35_0
 │   │       │       ├── 67a473248953641b_0
+│   │       │       ├── 6c038e3570d6abf1_0
+│   │       │       ├── 7b4fd8111178d5b1_0
+│   │       │       ├── b6c28cea6ed9dfc1_0
 │   │       │       ├── ba23d8ecda68de77_0
+│   │       │       ├── d0757ff92c7cde0a_0
 │   │       │       ├── f1cdccba37924bda_0
 │   │       │       ├── f1cdccba37924bda_1
+│   │       │       ├── f3ab1e1292e135fa_0
 │   │       │       ├── fa813c9ad67834ac_0
 │   │       │       └── index
 │   │       ├── Session Storage
@@ -162,10 +182,31 @@ biji_coffee
 │   │       │   ├── Session_13406458691466312
 │   │       │   ├── Session_13406460221980767
 │   │       │   ├── Session_13406473434348776
+│   │       │   ├── Session_13406518843914135
+│   │       │   ├── Session_13406519958941298
+│   │       │   ├── Session_13406538751471664
+│   │       │   ├── Session_13406570030160560
+│   │       │   ├── Session_13406606435303200
+│   │       │   ├── Session_13406608628732792
+│   │       │   ├── Session_13406609412382002
+│   │       │   ├── Session_13406616468530644
+│   │       │   ├── Session_13406636798637342
+│   │       │   ├── Session_13406637084768195
+│   │       │   ├── Session_13406637787034551
 │   │       │   ├── Tabs_13406458642183369
 │   │       │   ├── Tabs_13406458691591786
 │   │       │   ├── Tabs_13406460222181687
-│   │       │   └── Tabs_13406473434528623
+│   │       │   ├── Tabs_13406473434528623
+│   │       │   ├── Tabs_13406518844087049
+│   │       │   ├── Tabs_13406519959127290
+│   │       │   ├── Tabs_13406538751657874
+│   │       │   ├── Tabs_13406570030410038
+│   │       │   ├── Tabs_13406606435613990
+│   │       │   ├── Tabs_13406609412518814
+│   │       │   ├── Tabs_13406616468972619
+│   │       │   ├── Tabs_13406636798828482
+│   │       │   ├── Tabs_13406637084885813
+│   │       │   └── Tabs_13406637787198474
 │   │       ├── Shared Dictionary
 │   │       │   ├── cache
 │   │       │   │   ├── index-dir
@@ -182,6 +223,10 @@ biji_coffee
 │   │       │   │   ├── LOG.old
 │   │       │   │   └── MANIFEST-000001
 │   │       │   ├── 000003.log
+│   │       │   ├── 000004.log
+│   │       │   ├── 000005.ldb
+│   │       │   ├── 000007.log
+│   │       │   ├── 000008.ldb
 │   │       │   ├── CURRENT
 │   │       │   ├── LOCK
 │   │       │   ├── LOG
@@ -315,9 +360,15 @@ biji_coffee
 │       ├── bean.svg
 │       ├── bg1.jpg
 │       ├── card-bg.png
+│       ├── drink1.jpg
 │       ├── line.png
 │       ├── pic1.png
+│       ├── product1.jpg
+│       ├── product2.jpg
+│       ├── product3.jpg
+│       ├── product4.jpg
 │       ├── profile1.jpg
+│       ├── promosi.png
 │       ├── rank.png
 │       └── welcome.png
 ├── ios
@@ -387,28 +438,46 @@ biji_coffee
 │   │       ├── app_text_styles.dart
 │   │       └── app_theme.dart
 │   ├── data
+│   │   ├── cart_data.dart
+│   │   ├── message_data.dart
 │   │   └── products_data.dart
 │   ├── pages
 │   │   ├── auth
 │   │   │   └── login_page.dart
 │   │   ├── cart
 │   │   │   └── cart_page.dart
+│   │   ├── checkout
+│   │   │   ├── checkout_coupon_apply_page.dart
+│   │   │   ├── checkout_payment_method_page.dart
+│   │   │   ├── checkout_shipping_address_page.dart
+│   │   │   └── checkout_stepper.dart
 │   │   ├── home
 │   │   │   ├── widgets
 │   │   │   │   ├── category_section.dart
+│   │   │   │   ├── featured_beverages_section.dart
 │   │   │   │   ├── header_section.dart
 │   │   │   │   └── promotion_section.dart
 │   │   │   └── home_page.dart
+│   │   ├── messages
+│   │   │   ├── chat_detail_page.dart
+│   │   │   └── message_list_page.dart
+│   │   ├── notification
+│   │   │   └── notification_page.dart
 │   │   ├── onboarding
 │   │   │   └── onboarding_page.dart
 │   │   ├── products
+│   │   │   ├── detail_product_page.dart
 │   │   │   └── products_page.dart
 │   │   ├── profile
 │   │   │   └── profile_page.dart
 │   │   ├── rewards
 │   │   │   └── rewards_page.dart
-│   │   └── welcome
-│   │       └── welcome_page.dart
+│   │   ├── tracker
+│   │   │   └── delivery_tracker_page.dart
+│   │   ├── welcome
+│   │   │   └── welcome_page.dart
+│   │   └── wishlist
+│   │       └── wistlist.dart
 │   ├── widgets
 │   │   └── custom_bottom_nav.dart
 │   └── main.dart

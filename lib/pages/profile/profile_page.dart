@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
+import '../../widgets/custom_side_nav.dart'; // import widget nav samping
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Fungsi untuk toggle Drawer (buka/tutup)
+  void _toggleDrawer() {
+    if (_scaffoldKey.currentState!.isDrawerOpen) {
+      Navigator.of(context).pop(); // tutup drawer
+    } else {
+      _scaffoldKey.currentState!.openDrawer(); // buka drawer
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6E4C77), // warna ungu latar header
+      key: _scaffoldKey, // pasang key agar bisa dikontrol
+      drawer: const CustomSideNav(), // drawer dari widget kita
+      backgroundColor: const Color(0xFF6E4C77), // ungu
       appBar: AppBar(
         backgroundColor: const Color(0xFF6E4C77),
         elevation: 0,
@@ -23,11 +42,12 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: Icon(Icons.more_vert, color: Colors.white),
-          )
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onPressed:
+                _toggleDrawer, // tekan titik tiga untuk buka/tutup drawer
+          ),
         ],
       ),
       body: Column(
