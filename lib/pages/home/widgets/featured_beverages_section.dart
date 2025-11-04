@@ -180,7 +180,7 @@ class FeaturedBeveragesSection extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.shopping_bag_outlined,
                             color: AppColors.primary,
                             size: 26, // ⬆️ Ubah ukuran ikon

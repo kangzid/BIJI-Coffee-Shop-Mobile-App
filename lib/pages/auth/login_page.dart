@@ -5,7 +5,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = const Color(0xFF3E2A47); // Warna ungu tua
+    const Color primaryColor = Color(0xFF3E2A47); // Warna ungu tua
 
     return Scaffold(
       backgroundColor: primaryColor,

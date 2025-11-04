@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../core/routes/app_routes.dart'; // <-- IMPORT UNTUK REVIEW
 
 class ProductDetailPage extends StatefulWidget {
   final Map<String, dynamic> product;
 
   const ProductDetailPage({super.key, required this.product});
 
+  // --- INI YANG HILANG (createState) ---
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
+  // ------------------------------------
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
@@ -16,7 +19,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
+    // Gunakan widget.product untuk mengakses data
+    final product = widget.product; 
 
     final String imagePath = product['image'] ?? 'assets/images/placeholder.png';
     final String title = product['title'] ?? 'Produk Tanpa Nama';
@@ -38,7 +42,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             },
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 150),
+              padding: const EdgeInsets.only(bottom: 180), // Beri ruang lebih
               child: Column(
                 children: [
                   // ========== GAMBAR PRODUK DENGAN EFEK PARALLAX ==========
@@ -52,7 +56,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           bottomRight: Radius.circular(40),
                         ),
                         child: Hero(
-                          tag: "product_${product['id'] ?? title}",
+                          // Tag Hero harus unik
+                          tag: 'product-${product['title']}-${product['price']}',
                           child: Image.asset(
                             imagePath,
                             width: double.infinity,
@@ -238,37 +243,74 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           ),
 
-          // ========== TOMBOL PLACE ORDER ANIMASI ==========
+          // ========== TOMBOL PLACE ORDER & REVIEW (DIPERBAIKI) ==========
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
-            bottom: scrollOffset > 100 ? 0 : -100,
+            bottom: scrollOffset > 100 ? 0 : -150, // Disesuaikan
             left: 0,
             right: 0,
             child: Container(
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.95),
               padding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4A2C4B),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+              child: Column( // Diubah ke Column
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 1. Tombol Place Order
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4A2C4B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: Text(
+                        "PLACE ORDER   \$${(price * quantity).toStringAsFixed(1)}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                  child: Text(
-                    "PLACE ORDER   \$${(price * quantity).toStringAsFixed(1)}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                  const SizedBox(height: 12),
+                  // 2. Tombol Tulis Review
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        // Navigasi ke halaman review baru
+                        Navigator.pushNamed(
+                          context, 
+                          AppRoutes.writeReview,
+                          arguments: product, // Kirim data produk ini
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey.shade400),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: Text(
+                        "Tulis Review",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom / 2), // Padding bawah
+                ],
               ),
             ),
           ),
