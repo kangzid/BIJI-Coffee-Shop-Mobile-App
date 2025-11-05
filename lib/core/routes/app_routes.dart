@@ -22,7 +22,12 @@ import '../../pages/messages/chat_detail_page.dart';
 
 // Halaman pelacakan pesanan
 import '../../pages/tracker/delivery_tracker_page.dart';
+
 import '../../pages/order_review/order_review.dart';
+
+// Halaman lokasi toko
+import '../../pages/store_location/store_location_page.dart';
+
 // =========================================================
 
 class AppRoutes {
@@ -49,6 +54,10 @@ class AppRoutes {
   // Pelacakan
   static const String deliveryTracker = '/tracker';
   static const String orderReview = '/order-review';
+
+  // Lokasi Toko
+  static const String storeLocation = '/store-location';
+
   // ==========================================================
 
   // =================== GENERATE ROUTE =======================
@@ -101,6 +110,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const DeliveryTrackerPage());
       case orderReview:
         return MaterialPageRoute(builder: (_) => const OrderReviewPage());
+
+      // ===== Lokasi Toko =====
+      case storeLocation:
+        return MaterialPageRoute(builder: (_) => const StoreLocationPage());
+
       // ===== Default (404 Page) =====
       default:
         return MaterialPageRoute(
