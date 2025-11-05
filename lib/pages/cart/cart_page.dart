@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../data/cart_data.dart';
+import '../../../core/routes/app_routes.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -75,11 +76,15 @@ class _CartPageState extends State<CartPage>
       ),
 
       // 🧾 Tombol bawah
+// 🧾 Tombol bawah
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(30),
         color: Colors.white,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            // Arahkan ke halaman checkout pertama (Payment Method)
+            Navigator.pushNamed(context, AppRoutes.checkoutPayment);
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF3E2B47),
             minimumSize: const Size(double.infinity, 55),

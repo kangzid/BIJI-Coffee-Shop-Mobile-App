@@ -2,23 +2,36 @@
 import 'package:flutter/material.dart';
 
 class CheckoutStepper extends StatelessWidget implements PreferredSizeWidget {
-  final int step; // 0: Payment, 1: Shipping, 2: Coupon
+  final int step; // 0: Shipping, 1: Payment, 2: Coupon
+  final ValueChanged<int>? onStepTap;
   final VoidCallback? onBack;
 
-  const CheckoutStepper({Key? key, required this.step, this.onBack})
-      : super(key: key);
+  const CheckoutStepper({
+    Key? key,
+    required this.step,
+    this.onStepTap,
+    this.onBack,
+  }) : super(key: key);
 
   static const _labels = ['Shipping Address', 'Payment Method', 'Coupon Apply'];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final leftLabel = step == 0
+        ? _labels[1] // kalau di step 0, isi kanan tetap Payment
+        : _labels[
+            step - 1]; // kalau di tengah atau akhir, isi kiri = sebelumnya
+
+    final rightLabel = step == _labels.length - 1
+        ? _labels[step - 1] // kalau di step terakhir, isi kanan = sebelumnya
+        : _labels[step + 1]; // kalau belum terakhir, isi kanan = berikutnya
+
     return SafeArea(
       bottom: false,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // App bar row
+          // 🔹 App bar row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
             child: Row(
@@ -33,75 +46,112 @@ class CheckoutStepper extends StatelessWidget implements PreferredSizeWidget {
                 const Spacer(),
                 const Text(
                   'Checkout',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {},
-                )
+                ),
               ],
             ),
           ),
 
-          // Labels row (faded except current)
+          // 🔹 Label kiri - tengah - kanan
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
-              children: List.generate(_labels.length, (index) {
-                final active = index == step;
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      _labels[index],
-                      style: TextStyle(
-                        fontWeight: active ? FontWeight.w800 : FontWeight.w500,
-                        color: active ? Colors.black87 : Colors.grey.shade400,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Kiri (abu, klik ke step sebelumnya)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (step > 0) {
+                          onStepTap?.call(step - 1);
+                        }
+                      },
+                      child: Text(
+                        leftLabel,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade400,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
-                );
-              }),
+                ),
+
+                // Tengah (aktif)
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      _labels[step],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF3E2B47),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+
+                // Kanan (abu, klik ke step selanjutnya)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (step < _labels.length - 1) {
+                          onStepTap?.call(step + 1);
+                        }
+                      },
+                      child: Text(
+                        rightLabel,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade400,
+                        ),
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
           const SizedBox(height: 12),
-          // line + circle in center (step indicator)
+
+          // 🔹 Garis + lingkaran
           SizedBox(
             height: 36,
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // base line
-                Positioned.fill(
-                  top: 18,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                    child: Divider(
-                      thickness: 2,
-                      color: Colors.grey.shade300,
-                    ),
-                  ),
+                // ======================================================
+                // === REVISI DI SINI ===
+                //
+                // Garis lurus tunggal yang pas selebar layar
+                Container(
+                  height: 2, // Tinggi garis
+                  width: double.infinity, // Lebar penuh "pas layar"
+                  color: Colors.grey.shade300,
                 ),
-                // half-colored overlay showing progress (we simply darken center)
-                Positioned.fill(
-                  top: 18,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                    child: Align(
-                      alignment: Alignment( (step - 1) * 0.0, 0), // not used but kept
-                      child: FractionallySizedBox(
-                        widthFactor: 0.34,
-                        child: Divider(
-                          thickness: 3,
-                          color: const Color(0xFF523946),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                //
+                // ======================================================
 
-                // center circle
+                // Lingkaran tengah (tetap sama)
                 Container(
                   width: 44,
                   height: 44,
@@ -114,15 +164,15 @@ class CheckoutStepper extends StatelessWidget implements PreferredSizeWidget {
                         color: Colors.black.withOpacity(0.03),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
-                      )
+                      ),
                     ],
                   ),
                   child: Center(
                     child: Container(
                       width: 18,
                       height: 18,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF523946),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF523946),
                         shape: BoxShape.circle,
                       ),
                     ),

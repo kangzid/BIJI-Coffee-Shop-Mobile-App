@@ -12,7 +12,7 @@ import '../../pages/cart/cart_page.dart';
 import '../../pages/rewards/rewards_page.dart';
 import '../../pages/profile/profile_page.dart';
 import '../../pages/products/products_page.dart';
-
+import '../../pages/wishlist/wishlist_page.dart';
 // Halaman notifikasi
 import '../../pages/notification/notification_page.dart';
 
@@ -27,6 +27,10 @@ import '../../pages/order_review/order_review.dart';
 
 // Halaman lokasi toko
 import '../../pages/store_location/store_location_page.dart';
+// Halaman checkout
+import '../../pages/checkout/checkout_payment_method_page.dart';
+import '../../pages/checkout/checkout_shipping_address_page.dart';
+import '../../pages/checkout/checkout_coupon_apply_page.dart';
 
 // =========================================================
 
@@ -46,7 +50,8 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String products = '/products';
   static const String notifications = '/notifications';
-
+  //Wishlist
+  static const String wishlist = '/wishlist';
   // Pesan & Chat
   static const String messageList = '/messages';
   static const String chatDetail = '/chat-detail';
@@ -57,7 +62,10 @@ class AppRoutes {
 
   // Lokasi Toko
   static const String storeLocation = '/store-location';
-
+  // Checkout Pages
+  static const String checkoutPayment = '/checkout-payment';
+  static const String checkoutShipping = '/checkout-shipping';
+  static const String checkoutCoupon = '/checkout-coupon';
   // ==========================================================
 
   // =================== GENERATE ROUTE =======================
@@ -87,6 +95,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ProfilePage());
       case products:
         return MaterialPageRoute(builder: (_) => const ProductsPage());
+//==== Wishlist ====
+      case wishlist:
+        return MaterialPageRoute(builder: (_) => const WishlistPage());
 
       // ===== Notifikasi =====
       case notifications:
@@ -114,6 +125,15 @@ class AppRoutes {
       // ===== Lokasi Toko =====
       case storeLocation:
         return MaterialPageRoute(builder: (_) => const StoreLocationPage());
+      case checkoutPayment:
+        return MaterialPageRoute(
+            builder: (_) => const CheckoutPaymentMethodPage());
+      case checkoutShipping:
+        return MaterialPageRoute(
+            builder: (_) => const CheckoutShippingAddressPage());
+      case checkoutCoupon:
+        return MaterialPageRoute(
+            builder: (_) => const CheckoutCouponApplyPage());
 
       // ===== Default (404 Page) =====
       default:

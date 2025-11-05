@@ -5,13 +5,13 @@ class PromotionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16), // sejajar header
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title row
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 🔹 Header tetap di-padding agar sejajar
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
@@ -30,40 +30,47 @@ class PromotionSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+        ),
 
-          // Scroll horizontal cards
-          SizedBox(
-            height: 190, // Ukuran card tetap sama
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                // --- DIUBAH MENJADI 3 KARTU ---
-                _promoCard(),
-                _promoCard(),
-                _promoCard(),
-              ],
-            ),
+        const SizedBox(height: 12),
+
+        // 🔹 Area swipe — gambar keluar padding
+        SizedBox(
+          height: 190,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return OverflowBox(
+                maxWidth:
+                    constraints.maxWidth + 3, // nambah 16 kiri + 16 kanan
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  clipBehavior: Clip.none, // biar gak ke-clip
+                  children: [
+                    _promoCard(),
+                    _promoCard(),
+                    _promoCard(),
+                  ],
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  // Fungsi _promoCard (Tetap sama)
   Widget _promoCard() {
     return Container(
-      width: 325, // Ukuran card tetap sama
-      margin: const EdgeInsets.only(right: 16), // Margin tetap sama
+      width: 325,
+      margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18), // Radius tetap sama
+        borderRadius: BorderRadius.circular(18),
         image: const DecorationImage(
-          // Menggunakan gambar promosi baru Anda
           image: AssetImage("assets/images/promosi.png"),
-          fit: BoxFit.cover, // Memastikan gambar memenuhi seluruh card
+          fit: BoxFit.cover,
         ),
         boxShadow: [
-          // Shadow tetap sama
           BoxShadow(
             color: Colors.black.withOpacity(0.12),
             blurRadius: 8,
@@ -71,7 +78,6 @@ class PromotionSection extends StatelessWidget {
           ),
         ],
       ),
-      // Tidak ada child (Stack, Teks, Harga dihapus)
     );
   }
 }

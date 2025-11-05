@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/routes/app_routes.dart'; // pastikan path sesuai dengan lokasi file routes kamu
+import '../core/routes/app_routes.dart';
 
 class CustomSideNav extends StatelessWidget {
   const CustomSideNav({super.key});
@@ -70,7 +70,7 @@ class CustomSideNav extends StatelessWidget {
                     context,
                     icon: Icons.favorite_border,
                     title: 'Wishlist',
-                    route: AppRoutes.products, // sementara arahkan ke products
+                    route: AppRoutes.wishlist,
                   ),
                   _buildMenuItem(
                     context,
@@ -79,11 +79,11 @@ class CustomSideNav extends StatelessWidget {
                     route: AppRoutes.notifications,
                   ),
                   _buildMenuItem(
-  context,
-  icon: Icons.store_outlined,
-  title: 'Store Locations',
-  route: AppRoutes.storeLocation,  // ✅ BENAR
-),
+                    context,
+                    icon: Icons.store_outlined,
+                    title: 'Store Locations',
+                    route: AppRoutes.storeLocation, // ✅ BENAR
+                  ),
                   _buildMenuItem(
                     context,
                     icon: Icons.delivery_dining_outlined,
