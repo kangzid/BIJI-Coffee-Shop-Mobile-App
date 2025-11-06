@@ -52,10 +52,37 @@ class _StoreMapViewState extends State<StoreMapView> {
             maxZoom: 18.0,
           ),
           children: [
+            // ✅ Gunakan Google Maps Tile atau CartoDB (lebih reliable)
             TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              urlTemplate:
+                  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+              subdomains: const ['a', 'b', 'c', 'd'],
               userAgentPackageName: 'com.example.app',
+              maxNativeZoom: 19,
+              // Tambahkan headers untuk menghindari block
+              additionalOptions: const {
+                'attribution': '© OpenStreetMap contributors © CARTO',
+              },
             ),
+
+            // ALTERNATIF 1: CartoDB Dark (mode gelap)
+            // TileLayer(
+            //   urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            //   subdomains: const ['a', 'b', 'c', 'd'],
+            // ),
+
+            // ALTERNATIF 2: CartoDB Light (mode terang bersih)
+            // TileLayer(
+            //   urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            //   subdomains: const ['a', 'b', 'c', 'd'],
+            // ),
+
+            // ALTERNATIF 3: Stadia Maps (butuh API key gratis)
+            // TileLayer(
+            //   urlTemplate: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+            //   userAgentPackageName: 'com.example.app',
+            // ),
+
             MarkerLayer(
               markers: _buildMarkers(),
             ),
@@ -86,7 +113,8 @@ class _StoreMapViewState extends State<StoreMapView> {
               itemBuilder: (context, index) {
                 final store = widget.stores[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   child: _MapStoreCard(
                     store: store,
                     outletNumber: index + 1,
@@ -128,7 +156,7 @@ class _StoreMapViewState extends State<StoreMapView> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: isSelected 
+              color: isSelected
                   ? const Color(0xFF6F4E37)
                   : const Color(0xFF9B7E6B),
               shape: BoxShape.circle,

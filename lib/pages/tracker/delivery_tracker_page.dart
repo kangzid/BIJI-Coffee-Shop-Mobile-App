@@ -1,5 +1,5 @@
 // File: lib/pages/tracker/delivery_tracker_page.dart
-// (Versi LENGKAP dengan Simulasi Realistis)
+// (Versi LENGKAP dengan Tile Provider yang WORK di APK)
 
 import 'dart:async';
 import 'dart:ui';
@@ -13,8 +13,8 @@ import '../../core/routes/app_routes.dart';
 class DeliveryStep {
   final String title;
   final String subtitle;
-  final IconData icon; // Icon default
-  final IconData activeIcon; // Icon saat aktif
+  final IconData icon;
+  final IconData activeIcon;
 
   DeliveryStep({
     required this.title,
@@ -35,27 +35,21 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
   late final MapController _mapController;
   late final DraggableScrollableController _sheetController;
 
-  // --- STATE SIMULASI DINAMIS ---
   Timer? _timer;
   bool _isSheetFullScreen = false;
 
-  final LatLng _startPoint = const LatLng(-6.175, 106.828); // Lokasi Awal Driver
-  final LatLng _endPoint = const LatLng(-6.200, 106.845); // Lokasi Tujuan
+  final LatLng _startPoint = const LatLng(-6.175, 106.828);
+  final LatLng _endPoint = const LatLng(-6.200, 106.845);
 
-  late LatLng _driverLocation; // Posisi driver (dinamis)
+  late LatLng _driverLocation;
 
-  // --- PENGATURAN SIMULASI ---
-  final int _totalRouteSteps = 30; // Driver akan bergerak 30 kali
-  int _currentRouteStep = 0; // Progres pergerakan
-  // Durasi pergerakan driver di peta (1.5 detik per gerakan)
-  // Total simulasi = 30 * 1.5 = 45 detik (tidak lama)
-  final Duration _timerTick = const Duration(milliseconds: 1500); 
-  // -------------------------
+  final int _totalRouteSteps = 30;
+  int _currentRouteStep = 0;
+  final Duration _timerTick = const Duration(milliseconds: 1500);
 
-  int _currentDeliveryStep = 0; // Status di bottom sheet
-  String _estimatedTime = "15-18 men"; // Teks estimasi (mulai lama)
+  int _currentDeliveryStep = 0;
+  String _estimatedTime = "15-18 men";
 
-  // Daftar Langkah-langkah Status
   final List<DeliveryStep> _deliverySteps = [
     DeliveryStep(
       title: "Pesanan Dikonfirmasi",
@@ -89,7 +83,6 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
     ),
   ];
 
-  // Ukuran sheet
   final double _initialSheetSize = 0.25;
   final double _minSheetSize = 0.25;
   final double _maxSheetSize = 0.9;
@@ -100,8 +93,8 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
     _mapController = MapController();
     _sheetController = DraggableScrollableController();
 
-    _driverLocation = _startPoint; // Atur posisi awal driver
-    _estimatedTime = "15-18 men"; // Atur estimasi waktu awal
+    _driverLocation = _startPoint;
+    _estimatedTime = "15-18 men";
 
     _sheetController.addListener(() {
       final isFull = _sheetController.size > (_maxSheetSize - 0.1);
@@ -125,65 +118,57 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
     super.dispose();
   }
 
-  // --- FUNGSI SIMULASI UTAMA (Diperbarui untuk Realisme) ---
   void _startDeliverySimulation() {
     _timer = Timer.periodic(_timerTick, (timer) {
-      // 1. Cek apakah sudah selesai
       if (_currentRouteStep >= _totalRouteSteps) {
         timer.cancel();
         setState(() {
-          _driverLocation = _endPoint; // Pastikan driver di titik akhir
-          _currentDeliveryStep = 4; // Tiba
+          _driverLocation = _endPoint;
+          _currentDeliveryStep = 4;
           _estimatedTime = "Telah Tiba";
         });
         return;
       }
 
-      // 2. Tambah progres pergerakan
       _currentRouteStep++;
-      double progress = _currentRouteStep / _totalRouteSteps; // Progres 0.0 - 1.0
+      double progress = _currentRouteStep / _totalRouteSteps;
 
-      // 3. Hitung Posisi Baru Driver (Interpolasi Linear)
-      double newLat = _startPoint.latitude + (_endPoint.latitude - _startPoint.latitude) * progress;
-      double newLng = _startPoint.longitude + (_endPoint.longitude - _startPoint.longitude) * progress;
-      
-      // 4. Hitung Sisa Waktu & Status (Logika Non-Linear/Realistis)
+      double newLat = _startPoint.latitude +
+          (_endPoint.latitude - _startPoint.latitude) * progress;
+      double newLng = _startPoint.longitude +
+          (_endPoint.longitude - _startPoint.longitude) * progress;
+
       String newEstimatedTime = _estimatedTime;
       int newDeliveryStep = _currentDeliveryStep;
 
-      // Logika ini memetakan progres pergerakan (0-30 langkah) ke status dan teks ETA
-      if (_currentRouteStep == _totalRouteSteps - 1) { // 1 langkah lagi
+      if (_currentRouteStep == _totalRouteSteps - 1) {
         newEstimatedTime = "< 1 menit";
         newDeliveryStep = 3;
-      } else if (_currentRouteStep > 25) { // Sisa 5 langkah (83% selesai)
-        newEstimatedTime = "2-3 menit"; // Estimasi "melompat" cepat
+      } else if (_currentRouteStep > 25) {
+        newEstimatedTime = "2-3 menit";
         newDeliveryStep = 3;
-      } else if (_currentRouteStep > 15) { // Lewat setengah jalan (50% selesai)
+      } else if (_currentRouteStep > 15) {
         newEstimatedTime = "5-7 menit";
-        newDeliveryStep = 3; // "Sedang Diantar"
-      } else if (_currentRouteStep > 8) { // (26% selesai)
+        newDeliveryStep = 3;
+      } else if (_currentRouteStep > 8) {
         newEstimatedTime = "10-12 menit";
-        newDeliveryStep = 2; // "Siap Diambil"
-      } else if (_currentRouteStep > 2) { // (6% selesai)
+        newDeliveryStep = 2;
+      } else if (_currentRouteStep > 2) {
         newEstimatedTime = "12-15 menit";
-        newDeliveryStep = 1; // "Menuju Kedai"
+        newDeliveryStep = 1;
       }
-      // Status awal (0) dan ETA (15-18 men) sudah di-set di initState
 
-      // 5. Update State & Pindahkan Peta
       if (mounted) {
         setState(() {
-          _driverLocation = LatLng(newLat, newLng); // Update posisi driver
-          _estimatedTime = newEstimatedTime;        // Update teks estimasi
-          _currentDeliveryStep = newDeliveryStep;   // Update status
+          _driverLocation = LatLng(newLat, newLng);
+          _estimatedTime = newEstimatedTime;
+          _currentDeliveryStep = newDeliveryStep;
         });
 
-        // 6. Pindahkan kamera peta agar mengikuti driver
         _mapController.move(_driverLocation, _mapController.camera.zoom);
       }
     });
   }
-  // --- BATAS FUNGSI SIMULASI ---
 
   @override
   Widget build(BuildContext context) {
@@ -203,8 +188,7 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
-    // ... (Fungsi ini tidak berubah - AppBar Putih Solid)
-     return AppBar(
+    return AppBar(
       backgroundColor: Colors.white,
       elevation: 1,
       scrolledUnderElevation: 1,
@@ -239,25 +223,42 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
         initialZoom: 14.0,
       ),
       children: [
+        // ✅ PERBAIKAN: Gunakan CartoDB yang WORK di APK!
         TileLayer(
-          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          subdomains: const ['a', 'b', 'c'],
+          urlTemplate:
+              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+          subdomains: const ['a', 'b', 'c', 'd'],
+          userAgentPackageName: 'com.example.app',
+          maxNativeZoom: 19,
         ),
+
+        // ALTERNATIF lain yang juga WORK:
+        // 1. CartoDB Dark Mode
+        // TileLayer(
+        //   urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        //   subdomains: const ['a', 'b', 'c', 'd'],
+        // ),
+
+        // 2. CartoDB Light (Minimalis)
+        // TileLayer(
+        //   urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        //   subdomains: const ['a', 'b', 'c', 'd'],
+        // ),
+
         MarkerLayer(
           markers: [
-            // --- MODIFIKASI: Gunakan Posisi Dinamis ---
             Marker(
               width: 250.0,
               height: 70.0,
-              point: _driverLocation, // <-- POSISI DINAMIS
+              point: _driverLocation,
               child: _buildDriverMarker(context),
             ),
-            // ----------------------------------------
             Marker(
               width: 50.0,
               height: 50.0,
-              point: _endPoint, // <-- Gunakan _endPoint
-              child: const Icon(Icons.location_pin, color: Colors.red, size: 50),
+              point: _endPoint,
+              child:
+                  const Icon(Icons.location_pin, color: Colors.red, size: 50),
             ),
           ],
         ),
@@ -266,7 +267,6 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
   }
 
   Widget _buildDriverMarker(BuildContext context) {
-    // ... (Fungsi ini tidak berubah)
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
@@ -312,8 +312,7 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
   }
 
   Widget _buildMapControls({required double bottomPadding}) {
-    // ... (Fungsi ini tidak berubah)
-     return Positioned(
+    return Positioned(
       bottom: bottomPadding,
       right: 16,
       child: Column(
@@ -356,17 +355,14 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
             ),
           ),
           const SizedBox(height: 16),
-          // --- MODIFIKASI: Arahkan ke posisi driver saat ini ---
           FloatingActionButton(
             onPressed: () {
-              // Pindahkan peta ke posisi driver saat ini
               _mapController.move(_driverLocation, _mapController.camera.zoom);
             },
             backgroundColor: Colors.white,
             elevation: 4,
             child: const Icon(Icons.my_location, color: Colors.black54),
           ),
-          // --------------------------------------------------
         ],
       ),
     );
@@ -450,18 +446,14 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
-                // --- MODIFIKASI: Gunakan Widget Estimasi Waktu ---
                 _buildEstimatedTimeChip(_estimatedTime),
-                // --------------------------------------------
-
                 const SizedBox(height: 20),
                 ...List.generate(_deliverySteps.length, (index) {
                   return _buildStatusStep(
                     step: _deliverySteps[index],
                     index: index,
                     isLastStep: index == _deliverySteps.length - 1,
-                    currentStep: _currentDeliveryStep, // <-- Kirim status saat ini
+                    currentStep: _currentDeliveryStep,
                   );
                 }),
                 const Divider(height: 24, thickness: 1),
@@ -494,12 +486,10 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
       },
     );
   }
-  
-  // --- WIDGET BARU UNTUK CHIP ESTIMASI ---
+
   Widget _buildEstimatedTimeChip(String time) {
     bool hasArrived = time == "Telah Tiba";
-    
-    // Gunakan AnimatedSwitcher untuk transisi teks yang halus
+
     return Center(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
@@ -512,10 +502,9 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              hasArrived
-                  ? Icons.check_circle_outline
-                  : Icons.timer_outlined,
-              color: hasArrived ? Colors.green.shade700 : const Color(0xFF4B3B47),
+              hasArrived ? Icons.check_circle_outline : Icons.timer_outlined,
+              color:
+                  hasArrived ? Colors.green.shade700 : const Color(0xFF4B3B47),
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -526,7 +515,6 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
                 color: Colors.grey.shade700,
               ),
             ),
-            // Animasi teks
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (child, animation) {
@@ -536,8 +524,8 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
                 );
               },
               child: Text(
-                time, 
-                key: ValueKey<String>(time), // Penting untuk animasi
+                time,
+                key: ValueKey<String>(time),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -557,7 +545,6 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
     required String subtitle,
     Widget? trailing,
   }) {
-    // ... (Fungsi ini tidak berubah)
     return Row(
       children: [
         Icon(icon, color: const Color(0xFF4B3B47), size: 28),
@@ -582,12 +569,11 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
     required DeliveryStep step,
     required int index,
     required bool isLastStep,
-    required int currentStep, 
+    required int currentStep,
   }) {
-    // ... (Fungsi ini tidak berubah)
     final bool isCompleted = index < currentStep;
     final bool isActive = index == currentStep;
-    
+
     final Color activeColor = const Color(0xFF4B3B47);
     final Color inactiveColor = Colors.grey.shade300;
 
@@ -604,7 +590,7 @@ class _DeliveryTrackerPageState extends State<DeliveryTrackerPage> {
               child: Icon(
                 key: ValueKey<int>(isCompleted ? 0 : (isActive ? 1 : 2)),
                 isCompleted
-                    ? Icons.check_circle // Selesai (ikon dari screenshot)
+                    ? Icons.check_circle
                     : (isActive ? step.activeIcon : step.icon),
                 color: isCompleted || isActive ? activeColor : inactiveColor,
                 size: isActive ? 24.0 : 22.0,
