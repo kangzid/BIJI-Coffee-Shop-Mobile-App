@@ -37,10 +37,8 @@ class _RegisterPageState extends State<RegisterPage> {
         Uri.parse(ApiConstants.registerEndpoint),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'name': _usernameController
-              .text, // Backend expects 'name' or 'username' - check mismatch logic. Based on Postman sample: "username": "testuser" in request body
-          'username': _usernameController
-              .text, // Sending both just in case, typically Laravel Auth defaults to 'name' but Postman had 'username'
+          'name': _usernameController.text,
+          'username': _usernameController.text,
           'email': _emailController.text,
           'password': _passwordController.text,
         }),

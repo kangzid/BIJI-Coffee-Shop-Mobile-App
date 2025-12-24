@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:biji_coffee/pages/cart/cart_page.dart';
 import 'package:flutter/material.dart';
-import '../../data/products_data.dart';
+import 'package:http/http.dart' as http;
+import '../../core/constants/api_constants.dart';
+import '../../data/products_data.dart'; // Keep for Categories and backup
 import '/pages/products/detail_product_page.dart';
 
 class ProductsPage extends StatefulWidget {
@@ -16,20 +19,75 @@ class _ProductsPageState extends State<ProductsPage> {
   final TextEditingController _searchController = TextEditingController();
   late String selectedCategory;
   String searchQuery = '';
+  List<Map<String, dynamic>> _apiProducts = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     selectedCategory = widget.selectedCategory ?? 'Beverages';
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    try {
+      // Try to fetch from API
+      final response = await http.get(Uri.parse(ApiConstants.productsEndpoint));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        setState(() {
+          _apiProducts = data.map((item) {
+            // Basic implementation: Mapping API fields to Local format
+            // Force use dummy image as requested
+            return {
+              'id': item['id'],
+              'title': item['title'] ?? 'No Title',
+              'subtitle': item['subtitle'] ?? 'Coffee', // Default if missing
+              'price': (item['price'] is int)
+                  ? (item['price'] as int).toDouble()
+                  : (item['price'] ?? 0.0),
+              'image': 'assets/images/product1.jpg', // DUMMY IMAGE FIXED
+              'category':
+                  'Beverages', // You might want to map category_id to name if possible, or default
+              'description': item['description'] ?? '',
+              'rating': item['rating'] ?? 4.5,
+            };
+          }).toList();
+          _isLoading = false;
+        });
+      } else {
+        // Fallback to local data on error
+        setState(() {
+          _apiProducts = products; // from products_data.dart
+          _isLoading = false;
+        });
+        debugPrint('Failed to load products: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Fallback to local data on exception
+      setState(() {
+        _apiProducts = products; // from products_data.dart
+        _isLoading = false;
+      });
+      debugPrint('Error fetching products: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredProducts = products.where((product) {
+    // Use _apiProducts instead of static products
+    final filteredProducts = _apiProducts.where((product) {
       final title = product['title'].toString().toLowerCase();
       final matchesSearch = title.contains(searchQuery.toLowerCase());
-      final matchesCategory =
-          selectedCategory == 'All' || product['category'] == selectedCategory;
+
+      // Note: If API doesn't return category name matching the tabs, filtering might hide items.
+      // For now, let's assume 'Beverages' is safe or add 'All' logic.
+      final matchesCategory = selectedCategory == 'All' ||
+          selectedCategory == 'Beverages' ||
+          product['category'] == selectedCategory;
+
       return matchesSearch && matchesCategory;
     }).toList();
 
@@ -184,38 +242,48 @@ class _ProductsPageState extends State<ProductsPage> {
               const SizedBox(height: 20),
 
               // 🛍️ Product Grid (fix error ✅)
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                switchInCurve: Curves.easeInOut,
-                switchOutCurve: Curves.easeInOut,
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: ScaleTransition(
-                      scale: animation,
-                      child: child,
-                    ),
-                  );
-                },
-                child: GridView.builder(
-                  key: ValueKey(selectedCategory),
-                  shrinkWrap: true, // ✅ penting!
-                  physics:
-                      const NeverScrollableScrollPhysics(), // ✅ biar SingleChildScrollView yang handle scroll
-                  padding: const EdgeInsets.only(bottom: 16),
-                  itemCount: filteredProducts.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 30,
-                    mainAxisSpacing: 20,
-                    childAspectRatio: 0.55,
+              if (_isLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(50.0),
+                    child: CircularProgressIndicator(),
                   ),
-                  itemBuilder: (context, index) {
-                    final product = filteredProducts[index];
-                    return _buildProductCard(product);
+                )
+              else
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  switchInCurve: Curves.easeInOut,
+                  switchOutCurve: Curves.easeInOut,
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: ScaleTransition(
+                        scale: animation,
+                        child: child,
+                      ),
+                    );
                   },
+                  child: GridView.builder(
+                    key: ValueKey(selectedCategory),
+                    shrinkWrap: true, // ✅ penting!
+                    physics:
+                        const NeverScrollableScrollPhysics(), // ✅ biar SingleChildScrollView yang handle scroll
+                    padding: const EdgeInsets.only(bottom: 16),
+                    itemCount: filteredProducts.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 30,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 0.55,
+                    ),
+                    itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
+                      return _buildProductCard(product);
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),

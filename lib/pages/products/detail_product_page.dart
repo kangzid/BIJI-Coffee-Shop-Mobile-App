@@ -18,9 +18,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget build(BuildContext context) {
     final product = widget.product;
 
-    final String imagePath = product['image'] ?? 'assets/images/placeholder.png';
+    final String imagePath =
+        product['image'] ?? 'assets/images/placeholder.png';
     final String title = product['title'] ?? 'Produk Tanpa Nama';
-    final double price = (product['price'] ?? 0).toDouble();
+
+    // Robust parsing for price
+    double price = 0.0;
+    if (product['price'] != null) {
+      if (product['price'] is int) {
+        price = (product['price'] as int).toDouble();
+      } else if (product['price'] is double) {
+        price = product['price'];
+      } else if (product['price'] is String) {
+        price = double.tryParse(product['price']) ?? 0.0;
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -217,8 +229,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           // ========== TOMBOL BACK + FAVORITE ==========
           SafeArea(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -247,8 +258,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             right: 0,
             child: Container(
               color: Colors.white,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: SizedBox(
                 width: double.infinity,
                 height: 55,
